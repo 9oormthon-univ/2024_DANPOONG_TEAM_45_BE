@@ -1,1 +1,5 @@
 rootProject.name = 'TCL'
+include 'common'
+include 'domain'
+include 'security'
+include 'api-service'
