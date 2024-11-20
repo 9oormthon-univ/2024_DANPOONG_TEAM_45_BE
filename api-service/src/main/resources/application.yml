@@ -1,0 +1,25 @@
+spring:
+  profiles:
+    active: prod
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: application-prod.yml, application-oauth.yml, application-redis.yml
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: application-prod.yml, application-oauth.yml, application-redis.yml
+
+
+server:
+  port: 8080
