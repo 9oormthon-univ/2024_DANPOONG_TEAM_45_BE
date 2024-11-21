@@ -2,9 +2,10 @@ package com.codingland.domain.home.service;
 
 import com.codingland.common.exception.home.HomeErrorCode;
 import com.codingland.common.exception.home.HomeException;
+import com.codingland.domain.character.dto.ResponseCharacterDto;
+import com.codingland.domain.home.dto.RequestEditHomeDto;
 import com.codingland.domain.home.dto.ResponseHomeDto;
 import com.codingland.domain.home.dto.ResponseHomeListDto;
-import com.codingland.domain.home.dto.RequestEditHomeDto;
 import com.codingland.domain.home.entity.Home;
 import com.codingland.domain.home.repository.HomeRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,27 +23,32 @@ public class HomeService {
     /**
      * 홈을 생성합니다.
      */
+    @Deprecated
     public void createHome() {
         Home home = new Home();
         homeRepository.save(home);
     }
 
     /**
-     * 특정 홈을 단 건 조회합니다.
+     * 사용자의 Home을 단 건 조회합니다.
      *
-     * @param homeId 조회할 홈의 ID
+     * @param user_id 조회할 사용자의 Id
      * @return 홈 정보 DTO
      * @throws HomeException 홈이 존재하지 않을 경우 예외 발생
      */
-    public ResponseHomeDto getHome(Long homeId) {
-        Home foundHome = homeRepository.findById(homeId)
+    public ResponseHomeDto getHome(Long user_id) {
+        Home foundHome = homeRepository.findHomeByUserUserId(user_id)
                 .orElseThrow(() -> new HomeException(HomeErrorCode.NO_HOME_INFO));
 
         return new ResponseHomeDto(
                 foundHome.getId(),
-                foundHome.getCharacterId(),
-                foundHome.getCharacterType(),
-                foundHome.getCharacterName()
+                ResponseCharacterDto.builder()
+                        .id(foundHome.getCharacter().getId())
+                        .name(foundHome.getCharacter().getName())
+                        .level(foundHome.getCharacter().getLevel())
+                        .type(foundHome.getCharacter().getType())
+                        .activityPoints(foundHome.getCharacter().getActivityPoints())
+                        .build()
         );
     }
 
@@ -56,9 +62,13 @@ public class HomeService {
         List<ResponseHomeDto> homeDtoList = homes.stream()
                 .map(home -> new ResponseHomeDto(
                         home.getId(),
-                        home.getCharacterId(),
-                        home.getCharacterType(),
-                        home.getCharacterName()
+                        ResponseCharacterDto.builder()
+                                .id(home.getCharacter().getId())
+                                .name(home.getCharacter().getName())
+                                .level(home.getCharacter().getLevel())
+                                .type(home.getCharacter().getType())
+                                .activityPoints(home.getCharacter().getActivityPoints())
+                                .build()
                 ))
                 .collect(Collectors.toList());
         return new ResponseHomeListDto(homeDtoList);
@@ -68,13 +78,12 @@ public class HomeService {
      * 홈 정보를 수정합니다.
      *
      * @param homeId 수정할 홈의 ID
-     * @return 수정된 홈 엔티티
      * @throws HomeException 홈이 존재하지 않을 경우 예외 발생
      */
+    @Deprecated
     public void editHome(Long homeId,RequestEditHomeDto requestEditHomeDto) {
         Home home = homeRepository.findById(homeId)
                 .orElseThrow(() -> new HomeException(HomeErrorCode.NO_HOME_INFO));
-        ;
         home.editHome(requestEditHomeDto);
         homeRepository.save(home);
     }
