@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/home")
+@RequestMapping("/v1/api/home")
 @RequiredArgsConstructor
 @Tag(name = "[Home] 홈 API", description = "홈 생성, 홈 조회, 홈 수정, 홈 삭제")
 public class HomeController {
