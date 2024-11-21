@@ -11,12 +11,8 @@ import com.codingland.common.exception.user.UserException;
 import com.codingland.domain.chapter.entity.Chapter;
 import com.codingland.domain.chapter.repository.ChapterRepository;
 import com.codingland.domain.quiz.dto.*;
-import com.codingland.domain.quiz.entity.Difficulty;
-import com.codingland.domain.quiz.entity.IsQuizCleared;
-import com.codingland.domain.quiz.entity.Quiz;
-import com.codingland.domain.quiz.repository.DifficultyRepository;
-import com.codingland.domain.quiz.repository.IsQuizClearedRepository;
-import com.codingland.domain.quiz.repository.QuizRepository;
+import com.codingland.domain.quiz.entity.*;
+import com.codingland.domain.quiz.repository.*;
 import com.codingland.domain.user.entity.User;
 import com.codingland.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +29,8 @@ public class QuizService {
     private final DifficultyRepository difficultyRepository;
     private final IsQuizClearedRepository isQuizClearedRepository;
     private final UserRepository userRepository;
+    private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
 
     /**
      * 퀴즈 생성 요청을 처리하는 메서드.
@@ -47,15 +45,44 @@ public class QuizService {
                 .orElseThrow(() -> new ChapterException(ChapterErrorCode.NOT_FOUND_CHAPTER_ERROR));
         Difficulty difficulty = difficultyRepository.findByLevel(requestCreateQuizDto.level())
                 .orElseThrow(() -> new DifficultyException(DifficultyErrorCode.NOT_FOUND_DIFFICULTY_ERROR));
+        List<Question> questionList = new ArrayList<>();
+        List<Answer> answerList = new ArrayList<>();
+
         Quiz newQuiz = Quiz.builder()
-                .type(requestCreateQuizDto.type())
                 .title(requestCreateQuizDto.title())
-                .answer(requestCreateQuizDto.answer())
+                .message(requestCreateQuizDto.message())
+                .hint(requestCreateQuizDto.hint())
+                .questions(questionList)
+                .answers(answerList)
                 .chapter(foundChapter)
-                .question(requestCreateQuizDto.question())
                 .difficulty(difficulty)
                 .build();
+
+        for (RequestCreateQuestionDto createQuestionDto: requestCreateQuizDto.questions()) {
+            questionList.add(
+                    Question.builder()
+                            .type(createQuestionDto.type())
+                            .msg(createQuestionDto.msg())
+                            .repeat(createQuestionDto.repeat())
+                            .quiz(newQuiz)
+                            .build()
+            );
+        }
+
+        for (RequestCreateAnswerDto createAnswerDto: requestCreateQuizDto.answers()) {
+            answerList.add(
+                    Answer.builder()
+                            .type(createAnswerDto.type())
+                            .msg(createAnswerDto.msg())
+                            .repeat(createAnswerDto.repeat())
+                            .quiz(newQuiz)
+                            .build()
+            );
+        }
+
         quizRepository.save(newQuiz);
+        questionRepository.saveAll(questionList);
+        answerRepository.saveAll(answerList);
     }
 
     /**
@@ -76,15 +103,38 @@ public class QuizService {
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
         IsQuizCleared foundIsQuizCleared = isQuizClearedRepository.findByQuizAndUser(foundQuiz, foundUser)
                 .orElse(null);
+        List<ResponseQuestionDto> responseQuestionDtoList = new ArrayList<>();
+        List<ResponseAnswerDto> responseAnswerDtoList = new ArrayList<>();
+        for (Question question: foundQuiz.getQuestions()) {
+            responseQuestionDtoList.add(
+                    ResponseQuestionDto.builder()
+                            .id(question.getId())
+                            .msg(question.getMsg())
+                            .repeat(question.getRepeat())
+                            .type(question.getType())
+                            .build()
+            );
+        }
+        for (Answer answer: foundQuiz.getAnswers()) {
+            responseAnswerDtoList.add(
+                    ResponseAnswerDto.builder()
+                            .id(answer.getId())
+                            .msg(answer.getMsg())
+                            .repeat(answer.getRepeat())
+                            .type(answer.getType())
+                            .build()
+            );
+        }
         return ResponseQuizDto.builder()
                 .quizId(foundQuiz.getId())
+                .questions(responseQuestionDtoList)
+                .answers(responseAnswerDtoList)
                 .chapterId(foundQuiz.getChapter().getId())
-                .question(foundQuiz.getQuestion())
-                .answer(foundQuiz.getAnswer())
                 .title(foundQuiz.getTitle())
-                .type(foundQuiz.getType())
+                .message(foundQuiz.getMessage())
                 .level(foundQuiz.getDifficulty().getLevel())
                 .isCleared(foundIsQuizCleared != null && foundIsQuizCleared.isCleared())
+                .hint(foundQuiz.getHint())
                 .build();
     }
 
@@ -102,11 +152,10 @@ public class QuizService {
                     ResponseQuizDto.builder()
                             .quizId(quiz.getId())
                             .title(quiz.getTitle())
-                            .type(quiz.getType())
                             .chapterId(quiz.getChapter().getId())
-                            .answer(quiz.getAnswer())
-                            .question(quiz.getQuestion())
                             .level(quiz.getDifficulty().getLevel())
+                            .message(quiz.getMessage())
+                            .hint(quiz.getHint())
                             .build()
             );
         }
@@ -132,7 +181,7 @@ public class QuizService {
                 difficultyRepository.findByLevel(requestEditQuizDto.level()).orElse(null) :
                 foundQuiz.getDifficulty();
 
-        foundQuiz.updateQuizByDto(requestEditQuizDto, foundChapter, foundDifficulty);
+       foundQuiz.updateQuizByDto(requestEditQuizDto, foundChapter, foundDifficulty);
         quizRepository.save(foundQuiz);
     }
 

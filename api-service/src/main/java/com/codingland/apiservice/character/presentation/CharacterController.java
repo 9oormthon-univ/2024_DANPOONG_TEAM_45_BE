@@ -7,18 +7,20 @@ import com.codingland.domain.character.service.CharacterService;
 import com.codingland.domain.user.entity.User;
 import com.codingland.security.annotation.UserResolver;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/api/character")
 @RequiredArgsConstructor
+@Tag(name = "[Character] 캐릭터 API", description = "캐릭터 생성, 캐릭터 이름 수정, 활동 포인트 상승 하락")
 public class CharacterController {
     private final CharacterService characterService;
 
     @PostMapping
     @Operation(summary = "캐릭터 등록", description = """
-            (사용자) 캐릭터를 등록합니다.
+            (사용자) 캐릭터를 등록합니다. 생성된 캐릭터와 연관관계가 맺어진 홈이 같이 생성됩니다.
             """)
     public ApplicationResponse<ResponseCreateCharacterDto> createCharacter(
             @RequestBody RequestCharacterDto requestCharacterDto,

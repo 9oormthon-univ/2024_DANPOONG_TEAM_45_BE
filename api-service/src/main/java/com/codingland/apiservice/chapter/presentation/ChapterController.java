@@ -33,19 +33,19 @@ public class ChapterController {
     @Operation(summary = "챕터 단 건 조회", description = """
             (사용자) 챕터를 단 건 조회합니다.
             """)
-    public ApplicationResponse<ResponseChapterDto> getChapter(
-            @PathVariable Long chapter_id,
-            @UserResolver User user) {
+    public ApplicationResponse<ResponseChapterDto> getChapter(@PathVariable Long chapter_id, @UserResolver User user) {
         ResponseChapterDto result = chapterService.getChapter(chapter_id, user.getUserId());
         return ApplicationResponse.ok(result);
     }
 
     @GetMapping("/all")
     @Operation(summary = "등록된 챕터 모두 조회", description = """
-            (관리자) 데이터베이스에 등록된 챕터를 모두 조회합니다.
+            (사용자) 데이터베이스에 등록된 챕터를 모두 조회합니다.
             """)
-    public ApplicationResponse<ResponseChapterListDto> getAllChapters() {
-        ResponseChapterListDto result = chapterService.getChapterList();
+    public ApplicationResponse<ResponseChapterListDto> getAllChapters(
+            @UserResolver User user
+    ) {
+        ResponseChapterListDto result = chapterService.getChapterList(user.getUserId());
         return ApplicationResponse.ok(result);
     }
 
@@ -54,7 +54,7 @@ public class ChapterController {
             (관리자) 챕터 이름을 수정합니다.
             """)
     public ApplicationResponse<Void> editChapter(@PathVariable Long chapter_id,
-                                                 @RequestBody RequestEditChapterDto requestChapterDto) {
+                                            @RequestBody RequestEditChapterDto requestChapterDto) {
         chapterService.editChapter(chapter_id, requestChapterDto);
         return ApplicationResponse.ok(null);
     }

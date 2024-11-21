@@ -68,7 +68,6 @@ public class ChapterService {
                       .quizId(quiz.getId())
                       .level(quiz.getDifficulty().getLevel())
                       .title(quiz.getTitle())
-                      .type(quiz.getType())
                       .isCleared(foundIsQuizCleared != null && foundIsQuizCleared.isCleared())
                       .build()
             );
@@ -85,19 +84,25 @@ public class ChapterService {
      * 데이터베이스에 등록된 챕터를 모두 조회하는 메서드입니다.
      * @author 김원정
      */
-    public ResponseChapterListDto getChapterList() {
+    public ResponseChapterListDto getChapterList(Long user_id) {
         List<Chapter> foundChapterList = chapterRepository.findAll();
+        User foundUser = userRepository.findById(user_id)
+                .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
         List<ResponseChapterDto> responseChapterDtoList = new ArrayList<>();
         for (Chapter chapter : foundChapterList) {
+            IsChapterCleared foundIsChapterCleared = isChapterClearedRepository.findByChapterAndUser(chapter, foundUser)
+                    .orElse(null);
             List<ResponseFindByChapter> responseFindByChapterList = new ArrayList<>();
             if (!chapter.getQuizzes().isEmpty()) {
                 for (Quiz quiz : chapter.getQuizzes()) {
+                    IsQuizCleared foundIsQuizCleared = isQuizClearedRepository.findByQuizAndUser(quiz, foundUser)
+                                    .orElse(null);
                     responseFindByChapterList.add(
                             ResponseFindByChapter.builder()
+                                    .isCleared(foundIsQuizCleared != null && foundIsQuizCleared.isCleared())
                                     .quizId(quiz.getId())
                                     .level(quiz.getDifficulty().getLevel())
                                     .title(quiz.getTitle())
-                                    .type(quiz.getType())
                                     .build()
                     );
                 }
@@ -106,7 +111,7 @@ public class ChapterService {
                     new ResponseChapterDto(
                             chapter.getId(),
                             chapter.getName(),
-                            false,
+                            foundIsChapterCleared != null && foundIsChapterCleared.isCleared(),
                             responseFindByChapterList
                     )
             );
