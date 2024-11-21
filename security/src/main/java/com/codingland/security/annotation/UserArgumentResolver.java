@@ -4,6 +4,7 @@ import com.codingland.common.exception.security.SecurityCustomException;
 import com.codingland.common.exception.security.SecurityErrorCode;
 import com.codingland.domain.user.entity.User;
 import com.codingland.domain.user.service.UserQueryService;
+import com.codingland.security.jwt.dto.UserInfoDTO;
 import com.codingland.security.oauth.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,10 +35,12 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         try {
-            return userQueryService.findByEmail(((CustomUserDetails) userDetails).getEmail());
+            String name = ((UserInfoDTO) principal).name();
+            System.out.println("name ::: " + name);
+            return userQueryService.findByUserName(name);
         } catch (ClassCastException e) {
             // 로그아웃된 토큰
             throw new SecurityCustomException(SecurityErrorCode.UNAUTHORIZED);

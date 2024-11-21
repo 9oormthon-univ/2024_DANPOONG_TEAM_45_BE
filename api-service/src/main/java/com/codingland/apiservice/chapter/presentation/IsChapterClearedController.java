@@ -3,6 +3,8 @@ package com.codingland.apiservice.chapter.presentation;
 import com.codingland.domain.chapter.dto.ResponseIsChapterClearedDto;
 import com.codingland.domain.chapter.dto.ResponseIsChapterClearedListDto;
 import com.codingland.domain.chapter.service.IsChapterClearedService;
+import com.codingland.domain.user.entity.User;
+import com.codingland.security.annotation.UserResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,10 @@ public class IsChapterClearedController {
     @Operation(summary = "챕터 완료 여부 등록", description = """
             (사용자) 풀이 완료 된 챕터를 완료처리 합니다.
             """)
-    public ApplicationResponse<Void> solvedChapter(@RequestParam Long chapterId,
-                                              @RequestParam Long userId) {
-        isChapterClearedService.clearedChapter(chapterId, userId);
+    public ApplicationResponse<Void> solvedChapter(
+            @RequestParam Long chapterId,
+            @UserResolver User user) {
+        isChapterClearedService.clearedChapter(chapterId, user.getUserId());
         return ApplicationResponse.ok(null);
 }
 
@@ -30,7 +33,8 @@ public class IsChapterClearedController {
     @Operation(summary = "챕터 완료 여부 단 건 조회", description = """
             (관리자) 챕터 완료 여부 단 건 조회
             """)
-    public ApplicationResponse<ResponseIsChapterClearedDto> getIsChapterCleared(@PathVariable Long isChapterCleared_id) {
+    public ApplicationResponse<ResponseIsChapterClearedDto> getIsChapterCleared(
+            @PathVariable Long isChapterCleared_id) {
         ResponseIsChapterClearedDto result = isChapterClearedService.getIsChapterCleared(isChapterCleared_id);
         return ApplicationResponse.ok(result);
     }

@@ -1,14 +1,16 @@
 package com.codingland.apiservice.chapter.presentation;
 
+import com.codingland.common.common.ApplicationResponse;
 import com.codingland.domain.chapter.dto.RequestChapterDto;
 import com.codingland.domain.chapter.dto.RequestEditChapterDto;
 import com.codingland.domain.chapter.dto.ResponseChapterDto;
 import com.codingland.domain.chapter.dto.ResponseChapterListDto;
 import com.codingland.domain.chapter.service.ChapterService;
+import com.codingland.domain.user.entity.User;
+import com.codingland.security.annotation.UserResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import com.codingland.common.common.ApplicationResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,8 +33,10 @@ public class ChapterController {
     @Operation(summary = "챕터 단 건 조회", description = """
             (사용자) 챕터를 단 건 조회합니다.
             """)
-    public ApplicationResponse<ResponseChapterDto> getChapter(@PathVariable Long chapter_id, @RequestParam Long user_id) {
-        ResponseChapterDto result = chapterService.getChapter(chapter_id, user_id);
+    public ApplicationResponse<ResponseChapterDto> getChapter(
+            @PathVariable Long chapter_id,
+            @UserResolver User user) {
+        ResponseChapterDto result = chapterService.getChapter(chapter_id, user.getUserId());
         return ApplicationResponse.ok(result);
     }
 
@@ -50,7 +54,7 @@ public class ChapterController {
             (관리자) 챕터 이름을 수정합니다.
             """)
     public ApplicationResponse<Void> editChapter(@PathVariable Long chapter_id,
-                                            @RequestBody RequestEditChapterDto requestChapterDto) {
+                                                 @RequestBody RequestEditChapterDto requestChapterDto) {
         chapterService.editChapter(chapter_id, requestChapterDto);
         return ApplicationResponse.ok(null);
     }
