@@ -40,10 +40,12 @@ public class ChapterController {
 
     @GetMapping("/all")
     @Operation(summary = "등록된 챕터 모두 조회", description = """
-            (관리자) 데이터베이스에 등록된 챕터를 모두 조회합니다.
+            (사용자) 데이터베이스에 등록된 챕터를 모두 조회합니다.
             """)
-    public ApplicationResponse<ResponseChapterListDto> getAllChapters() {
-        ResponseChapterListDto result = chapterService.getChapterList();
+    public ApplicationResponse<ResponseChapterListDto> getAllChapters(
+            @UserResolver User user
+    ) {
+        ResponseChapterListDto result = chapterService.getChapterList(user.getUserId());
         return ApplicationResponse.ok(result);
     }
 
