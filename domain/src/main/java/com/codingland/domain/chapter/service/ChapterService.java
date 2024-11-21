@@ -68,7 +68,6 @@ public class ChapterService {
                       .quizId(quiz.getId())
                       .level(quiz.getDifficulty().getLevel())
                       .title(quiz.getTitle())
-                      .type(quiz.getType())
                       .isCleared(foundIsQuizCleared != null && foundIsQuizCleared.isCleared())
                       .build()
             );
@@ -97,7 +96,6 @@ public class ChapterService {
                                     .quizId(quiz.getId())
                                     .level(quiz.getDifficulty().getLevel())
                                     .title(quiz.getTitle())
-                                    .type(quiz.getType())
                                     .build()
                     );
                 }
