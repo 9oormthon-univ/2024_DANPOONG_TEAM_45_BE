@@ -26,6 +26,7 @@ public class HomeController {
     @Operation(summary = "홈 등록", description = """
             홈을 등록합니다.
             """)
+    @Deprecated
     public ResponseEntity<Void> createHome() {
         homeService.createHome();
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
@@ -54,6 +55,7 @@ public class HomeController {
     @Operation(summary = "홈 수정", description = """
             홈 정보를 수정합니다.
             """)
+    @Deprecated
     public ResponseEntity<Void> editHome(@PathVariable Long home_id,@RequestBody RequestEditHomeDto requestEditHomeDto) {
         homeService.editHome(home_id,requestEditHomeDto);
         return ResponseEntity.status(HttpStatus.OK).body(null);

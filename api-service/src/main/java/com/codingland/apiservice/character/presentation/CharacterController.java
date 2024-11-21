@@ -19,7 +19,7 @@ public class CharacterController {
     private final CharacterService characterService;
 
     @PostMapping
-    @Operation(summary = "캐릭터 등록", description = """
+    @Operation(summary = "캐릭터 등록 및 홈 등록", description = """
             (사용자) 캐릭터를 등록합니다. 생성된 캐릭터와 연관관계가 맺어진 홈이 같이 생성됩니다.
             """)
     public ApplicationResponse<ResponseCreateCharacterDto> createCharacter(
