@@ -5,7 +5,6 @@ import com.codingland.common.exception.security.SecurityErrorCode;
 import com.codingland.domain.user.entity.User;
 import com.codingland.domain.user.service.UserQueryService;
 import com.codingland.security.jwt.dto.UserInfoDTO;
-import com.codingland.security.oauth.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
