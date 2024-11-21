@@ -31,7 +31,7 @@ public class HomeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
-    @GetMapping("/")
+    @GetMapping
     @Operation(summary = "홈 단 건 조회", description = """
            (사용자) 사용자의 홈을 단 건 조회합니다.
            """)
