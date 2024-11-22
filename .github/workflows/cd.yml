@@ -24,6 +24,13 @@ jobs:
           echo "${{ secrets.APPLICATION_PROD }}" > ./application-prod.yml
         shell: bash
 
+      - name: Make application-ai.yml
+        run: |
+          cd ./api-service/src/main/resources
+          touch ./application-ai.yml
+          echo "${{ secrets.APPLICATION_AI }}" > ./application-ai.yml
+        shell: bash
+
       - name: make application-oauth yml file
         run: |
           cd ./security/src/main/resources

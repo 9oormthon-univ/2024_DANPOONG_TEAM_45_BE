@@ -11,14 +11,14 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: application-prod.yml, application-oauth.yml, application-redis.yml
+    import: application-prod.yml, application-oauth.yml, application-redis.yml, application-ai.yml
 
 ---
 spring:
   config:
     activate:
       on-profile: prod
-    import: application-prod.yml, application-oauth.yml, application-redis.yml
+    import: application-prod.yml, application-oauth.yml, application-redis.yml, application-ai.yml
 
 
 server:
