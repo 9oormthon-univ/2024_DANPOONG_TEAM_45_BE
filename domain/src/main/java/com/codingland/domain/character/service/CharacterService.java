@@ -46,6 +46,7 @@ public class CharacterService {
         Character newCharacter = Character.builder()
                 .name(requestCharacterDto.name())
                 .user(foundUser)
+                .cactus(CactusType.KING_CACTUS)
                 .build();
         Character savedCharacter = characterRepository.save(newCharacter);
         Home newHome = new Home(foundUser, savedCharacter);

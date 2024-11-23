@@ -120,6 +120,7 @@ public class HomeService {
      * @param character_id 바뀔 캐릭터 id
      * @param user_id 유저의 캐릭터인지 확인하기 위해 필요한 Id
      */
+    @Deprecated
     public void changeCharacter(Long home_id, Long character_id, Long user_id) {
         Home foundHome = homeRepository.findById(home_id)
                 .orElseThrow(() -> new HomeException(HomeErrorCode.NO_HOME_INFO));
