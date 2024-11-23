@@ -4,6 +4,7 @@ import com.codingland.common.common.ApplicationResponse;
 import com.codingland.domain.character.dto.RequestCharacterDto;
 import com.codingland.domain.character.dto.ResponseCharacterDto;
 import com.codingland.domain.character.dto.ResponseCreateCharacterDto;
+import com.codingland.domain.character.dto.ResponseListCharacterDto;
 import com.codingland.domain.character.service.CharacterService;
 import com.codingland.domain.user.entity.User;
 import com.codingland.security.annotation.UserResolver;
@@ -62,6 +63,15 @@ public class CharacterController {
             """)
     public ApplicationResponse<ResponseCharacterDto> getRandomCharacter(@UserResolver User user) {
         ResponseCharacterDto result = characterService.pickRandomCharacter(user.getUserId());
+        return ApplicationResponse.ok(result);
+    }
+
+    @GetMapping("/guidebook")
+    @Operation(summary = "유저의 선인장 도감", description = """
+            (사용자) 유저가 가지고 있는 선인장의 목록을 보여줍니다.
+            """)
+    public ApplicationResponse<ResponseListCharacterDto> getGuidebookCharacter(@UserResolver User user) {
+        ResponseListCharacterDto result = characterService.getAllCharacters(user.getUserId());
         return ApplicationResponse.ok(result);
     }
 }

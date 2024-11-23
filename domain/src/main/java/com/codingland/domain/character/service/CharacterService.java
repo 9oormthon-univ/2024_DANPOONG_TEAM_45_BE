@@ -10,6 +10,7 @@ import com.codingland.domain.character.common.CactusType;
 import com.codingland.domain.character.dto.RequestCharacterDto;
 import com.codingland.domain.character.dto.ResponseCharacterDto;
 import com.codingland.domain.character.dto.ResponseCreateCharacterDto;
+import com.codingland.domain.character.dto.ResponseListCharacterDto;
 import com.codingland.domain.character.entity.Character;
 import com.codingland.domain.character.repository.CharacterRepository;
 import com.codingland.domain.home.entity.Home;
@@ -19,6 +20,8 @@ import com.codingland.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -95,7 +98,29 @@ public class CharacterService {
     /**
      * 유저가 가지고 있는 캐릭터를 전체 조회하는 메서드
      * @author 김원정
+     * @param user_id 유저의 id
+     * @throws UserException 유저가 존재하지 않을 경우 발생하는 예외
      */
+    public ResponseListCharacterDto getAllCharacters(Long user_id) {
+        User foundUser = userRepository.findById(user_id)
+                .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
+        List<Character> foundCharacterList = characterRepository.findCharacterByUser(foundUser);
+        List<ResponseCharacterDto> responseCharacterDtoList = new ArrayList<>();
+        for (Character character : foundCharacterList) {
+            responseCharacterDtoList.add(
+                    ResponseCharacterDto.builder()
+                            .id(character.getId())
+                            .name(character.getName())
+                            .level(character.getLevel())
+                            .type(character.getType())
+                            .cactusType(character.getCactus())
+                            .activityPoints(character.getActivityPoints())
+                            .build()
+            );
+        }
+        return new ResponseListCharacterDto(responseCharacterDtoList);
+    }
+
 
     /**
      * 캐릭터 랜덤 뽑기한 다음에 홈 화면의 선인장을 바꾸는 메서드입니다.
