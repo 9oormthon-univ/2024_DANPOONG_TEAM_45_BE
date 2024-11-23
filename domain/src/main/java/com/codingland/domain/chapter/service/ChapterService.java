@@ -59,6 +59,25 @@ public class ChapterService {
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
         IsChapterCleared foundIsChapterCleared = isChapterClearedRepository.findByChapterAndUser(foundChapter, foundUser)
                 .orElse(null);
+
+        boolean buttonActiveState = true;
+
+        for (Quiz quiz : foundChapter.getQuizzes()) {
+            IsQuizCleared foundIsQuizCleared = isQuizClearedRepository.findByQuizAndUser(quiz, foundUser)
+                    .orElse(null);
+
+            if (foundIsQuizCleared == null) {
+                buttonActiveState = false;
+                break;
+            }
+        }
+
+        if (buttonActiveState) {
+            if (foundChapter.isHasReceivedReward()) {
+                buttonActiveState = false;
+            }
+        }
+
         List<ResponseFindByChapter> responseQuizDtoList = new ArrayList<>();
         for (Quiz quiz : foundChapter.getQuizzes()) {
             IsQuizCleared foundIsQuizCleared = isQuizClearedRepository.findByQuizAndUser(quiz, foundUser)
@@ -72,12 +91,15 @@ public class ChapterService {
                       .build()
             );
         }
-        return new ResponseChapterDto(
-                foundChapter.getId(),
-                foundChapter.getName(),
-                foundIsChapterCleared != null && foundIsChapterCleared.isCleared(),
-                responseQuizDtoList
-        );
+
+
+        return ResponseChapterDto.builder()
+                .id(foundChapter.getId())
+                .name(foundChapter.getName())
+                .isCleared(foundIsChapterCleared != null && foundIsChapterCleared.isCleared())
+                .quizzes(responseQuizDtoList)
+                .isRewardButtonActive(buttonActiveState)
+                .build();
     }
 
     /**
@@ -108,12 +130,12 @@ public class ChapterService {
                 }
             }
             responseChapterDtoList.add(
-                    new ResponseChapterDto(
-                            chapter.getId(),
-                            chapter.getName(),
-                            foundIsChapterCleared != null && foundIsChapterCleared.isCleared(),
-                            responseFindByChapterList
-                    )
+                    ResponseChapterDto.builder()
+                            .id(chapter.getId())
+                            .name(chapter.getName())
+                            .isCleared(foundIsChapterCleared != null && foundIsChapterCleared.isCleared())
+                            .quizzes(responseFindByChapterList)
+                            .build()
             );
         }
         return new ResponseChapterListDto(responseChapterDtoList);
@@ -142,5 +164,18 @@ public class ChapterService {
         Chapter foundChapter = chapterRepository.findById(chapter_id)
                 .orElseThrow(() -> new ChapterException(ChapterErrorCode.NOT_FOUND_CHAPTER_ERROR));
         chapterRepository.delete(foundChapter);
+    }
+
+    /**
+     * 챕터 보상 수령 처리 메서드입니다.
+     * @author 김원정
+     * @param chapter_id 챕터의 id
+     * @throws ChapterException 챕터가 존재하지 않을 경우 생기는 예외
+     */
+    public void processChapterReward(Long chapter_id) {
+        Chapter foundChapter = chapterRepository.findById(chapter_id)
+                .orElseThrow(() -> new ChapterException(ChapterErrorCode.NOT_FOUND_CHAPTER_ERROR));
+        foundChapter.checkRewardStatus();
+        chapterRepository.save(foundChapter);
     }
 }

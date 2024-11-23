@@ -19,6 +19,7 @@ public class Chapter {
     @Column(name = "CHAPTER_ID")
     private Long id;
     private String name;
+    private boolean hasReceivedReward = false;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
     private List<Quiz> quizzes = new ArrayList<>();
@@ -29,5 +30,8 @@ public class Chapter {
 
     public void editChapter(RequestEditChapterDto requestEditChapterDto) {
         this.name = requestEditChapterDto.name();
+    }
+    public void checkRewardStatus() {
+        this.hasReceivedReward = true;
     }
 }

@@ -1,7 +1,15 @@
 package com.codingland.domain.user.service;
 
+
 import com.codingland.common.exception.user.UserErrorCode;
 import com.codingland.common.exception.user.UserException;
+import com.codingland.domain.chapter.entity.IsChapterCleared;
+import com.codingland.domain.chapter.repository.IsChapterClearedRepository;
+import com.codingland.domain.character.entity.Character;
+import com.codingland.domain.character.repository.CharacterRepository;
+import com.codingland.domain.home.repository.HomeRepository;
+import com.codingland.domain.quiz.entity.IsQuizCleared;
+import com.codingland.domain.quiz.repository.IsQuizClearedRepository;
 import com.codingland.domain.user.dto.request.EditUserRequest;
 import com.codingland.domain.user.dto.response.FindAllUserResponse;
 import com.codingland.domain.user.dto.response.UserResponse;
@@ -17,6 +25,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final IsQuizClearedRepository isQuizClearedRepository;
+    private final IsChapterClearedRepository isChapterClearedRepository;
+    private final HomeRepository homeRepository;
+    private final CharacterRepository characterRepository;
 
     /**
      * 유저 단 건 조회
@@ -93,6 +105,37 @@ public class UserService {
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
         return foundUser.isTrainingComplete();
+    }
+
+    /**
+     * 회원 탈퇴 메서드입니다.
+     * @author 김원정
+     * @param user_id 유저의 id
+     * @throws UserException 유저를 찾기 못할 경우에 발생하는 예외
+     */
+    public void deleteAccount(Long user_id) {
+
+        User foundUser = userRepository.findById(user_id)
+                .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
+        // 퀴즈 확인 완료 여부 삭제
+        List<IsQuizCleared> foundIsQuizClearedList = isQuizClearedRepository.findByUser(foundUser);
+        if (!foundIsQuizClearedList.isEmpty()) {
+            isQuizClearedRepository.deleteAll(foundIsQuizClearedList);
+        }
+        // 챕터 확인 완료 여부 삭제
+        List<IsChapterCleared> foundIsChapterClearedList = isChapterClearedRepository.findByUser(foundUser);
+        if (!foundIsChapterClearedList.isEmpty()) {
+            isChapterClearedRepository.deleteAll(foundIsChapterClearedList);
+        }
+        // 홈 삭제
+        homeRepository.findByUser(foundUser).ifPresent(homeRepository::delete);
+        // 캐릭터 삭제
+        List<Character> foundCharacterList = characterRepository.findCharacterByUser(foundUser);
+        if (!foundCharacterList.isEmpty()) {
+            characterRepository.deleteAll(foundCharacterList);
+        }
+
+        userRepository.delete(foundUser);
     }
 
 }
