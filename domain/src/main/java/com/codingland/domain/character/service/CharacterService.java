@@ -2,9 +2,13 @@ package com.codingland.domain.character.service;
 
 import com.codingland.common.exception.character.CharacterErrorCode;
 import com.codingland.common.exception.character.CharacterException;
+import com.codingland.common.exception.home.HomeErrorCode;
+import com.codingland.common.exception.home.HomeException;
 import com.codingland.common.exception.user.UserErrorCode;
 import com.codingland.common.exception.user.UserException;
+import com.codingland.domain.character.common.CactusType;
 import com.codingland.domain.character.dto.RequestCharacterDto;
+import com.codingland.domain.character.dto.ResponseCharacterDto;
 import com.codingland.domain.character.dto.ResponseCreateCharacterDto;
 import com.codingland.domain.character.entity.Character;
 import com.codingland.domain.character.repository.CharacterRepository;
@@ -14,6 +18,8 @@ import com.codingland.domain.user.entity.User;
 import com.codingland.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -32,10 +38,13 @@ public class CharacterService {
      * @throws UserException 유저를 찾지 못했을 때 반환되는 예외
      */
     public ResponseCreateCharacterDto createCharacter(Long user_id, RequestCharacterDto requestCharacterDto) {
-        Character newCharacter = new Character(requestCharacterDto.name());
-        Character savedCharacter = characterRepository.save(newCharacter);
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
+        Character newCharacter = Character.builder()
+                .name(requestCharacterDto.name())
+                .user(foundUser)
+                .build();
+        Character savedCharacter = characterRepository.save(newCharacter);
         Home newHome = new Home(foundUser, savedCharacter);
         Home savedHome = homeRepository.save(newHome);
         return new ResponseCreateCharacterDto(savedCharacter.getId(), savedHome.getId());
@@ -81,6 +90,46 @@ public class CharacterService {
                 .orElseThrow(() -> new CharacterException(CharacterErrorCode.NOT_FOUND_CHARACTER_ERROR));
         foundCharacter.decreaseActivityPoints(decreased_point);
         characterRepository.save(foundCharacter);
+    }
+
+    /**
+     * 유저가 가지고 있는 캐릭터를 전체 조회하는 메서드
+     * @author 김원정
+     */
+
+    /**
+     * 캐릭터 랜덤 뽑기한 다음에 홈 화면의 선인장을 바꾸는 메서드입니다.
+     * @author 김원정
+     * @param user_id 랜덤 뽑기를 하는 유저 id
+     * @throws UserException 유저가 존재하지 않을 경우 발생하는 예외
+     * @throws HomeException 등록된 홈이 존재하지 않을 경우 발생하는 예외
+     */
+    public ResponseCharacterDto pickRandomCharacter(Long user_id) {
+        User foundUser = userRepository.findById(user_id)
+                .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
+        Character foundCharacter = characterRepository.findCharacterByUser(foundUser)
+                .getFirst();
+        Random random = new Random();
+        int index = random.nextInt(CactusType.values().length - 1) + 1;
+        CactusType randomCactusType = CactusType.values()[index];
+        Character newCharacter = Character.builder()
+                .name(foundCharacter.getName())
+                .cactus(randomCactusType)
+                .user(foundUser)
+                .build();
+        Character savedCharacter = characterRepository.save(newCharacter);
+        Home foundHome = homeRepository.findHomeByUserUserId(user_id)
+                .orElseThrow(() -> new HomeException(HomeErrorCode.NO_HOME_INFO));
+        foundHome.changeCharacter(savedCharacter);
+        homeRepository.save(foundHome);
+        return ResponseCharacterDto.builder()
+                .id(savedCharacter.getId())
+                .name(savedCharacter.getName())
+                .level(savedCharacter.getLevel())
+                .type(savedCharacter.getType())
+                .cactusType(savedCharacter.getCactus())
+                .activityPoints(savedCharacter.getActivityPoints())
+                .build();
     }
 
 

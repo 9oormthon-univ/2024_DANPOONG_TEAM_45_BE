@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum CharacterErrorCode implements BaseErrorCode {
     NOT_FOUND_CHARACTER_ERROR(HttpStatus.BAD_REQUEST, "2000", "캐릭터 정보가 정보가 존재하지 않습니다."),
+    IT_IS_NOT_YOUR_CHARACTER(HttpStatus.BAD_REQUEST, "2000", "사용자의 캐릭터가 아닙니다.")
     ;
     private final HttpStatus httpStatus;
     private final String code;
