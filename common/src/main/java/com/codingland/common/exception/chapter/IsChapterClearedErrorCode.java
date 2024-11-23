@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum IsChapterClearedErrorCode implements BaseErrorCode {
     NOT_FOUND_IS_CHAPTER_CLEARED_ERROR(HttpStatus.BAD_REQUEST, "2000", "챕터 완료 정보가 존재하지 않습니다."),
+    ALREADY_EXIST(HttpStatus.BAD_REQUEST, "2000", "챕터 완료 정보가 이미 존재합니다.")
     ;
     private final HttpStatus httpStatus;
     private final String code;

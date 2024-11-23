@@ -30,11 +30,13 @@ public class IsQuizClearedService {
 
     /**
      * 풀이가 완료된 퀴즈를 유저 정보와 함께 등록처리 합니다.
+     * 풀이 완료 처리 전, 해당 퀴즈 id와 유저 Id로 등록된 ROW가 있는지 확인하고 있다면 예외처리합니다.
      * @author 김원정
      * @param quiz_id 퀴즈 id
      * @param user_id 유저 id
      * @throws UserException 유저가 존재하지 않을 경우 발생하는 예외입니다.
      * @throws QuizException 문제가 존재하지 않을 경우 발생하는 예외입니다.
+     * @throws IsQuizClearedException 이미 풀이 완료가 처리 된 후라면 발생하는 예외입니다.
      */
     @Transactional
     public void solveProblem(Long quiz_id, Long user_id) {
@@ -42,6 +44,9 @@ public class IsQuizClearedService {
                     .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
             Quiz foundQuiz = quizRepository.findById(quiz_id)
                     .orElseThrow(() -> new QuizException(QuizErrorCode.NOT_FOUND_QUIZ_ERROR));
+        if (isQuizClearedRepository.findByQuizAndUser(foundQuiz, foundUser).isPresent()) {
+            throw new IsQuizClearedException(IsQuizClearedErrorCode.ALREADY_EXIST);
+        }
             IsQuizCleared newIsQuizCleared = IsQuizCleared.thisProblemIsCleared(foundQuiz, foundUser);
             isQuizClearedRepository.save(newIsQuizCleared);
     }

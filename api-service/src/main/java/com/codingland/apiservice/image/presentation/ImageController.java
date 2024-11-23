@@ -1,6 +1,7 @@
-package com.codingland.domain.image.controller;
+package com.codingland.apiservice.image.presentation;
 
 import com.codingland.domain.image.service.ImageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/api/image")
 @RequiredArgsConstructor
+@Tag(name = "[Image] 이미지 API", description = "사진 조회")
 public class ImageController {
     private final ImageService imageService;
 
