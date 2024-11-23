@@ -48,7 +48,8 @@ public class HomeService {
                         .level(foundHome.getCharacter().getLevel())
                         .type(foundHome.getCharacter().getType())
                         .activityPoints(foundHome.getCharacter().getActivityPoints())
-                        .build()
+                        .build(),
+                foundHome.getUser().getPicture()
         );
     }
 
@@ -68,7 +69,8 @@ public class HomeService {
                                 .level(home.getCharacter().getLevel())
                                 .type(home.getCharacter().getType())
                                 .activityPoints(home.getCharacter().getActivityPoints())
-                                .build()
+                                .build(),
+                        home.getUser().getPicture()
                 ))
                 .collect(Collectors.toList());
         return new ResponseHomeListDto(homeDtoList);
