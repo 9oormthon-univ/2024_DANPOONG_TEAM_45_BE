@@ -17,6 +17,7 @@ import com.codingland.domain.user.entity.User;
 import com.codingland.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class UserService {
      * @param user_id 유저의 id
      * @throws UserException 유저를 찾지 못할 경우에 발생하는 예외
      */
+    @Transactional(readOnly = true)
     public UserResponse findByUserId(Long user_id) {
         User user = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
@@ -52,6 +54,7 @@ public class UserService {
      * 등록된 유저를 모두 조회하는 메서드.
      * @author 김원정
      */
+    @Transactional(readOnly = true)
    public FindAllUserResponse findAllUser() {
        List<User> users = userRepository.findAll();
        List<UserResponse> findAllUserResponseList = new ArrayList<>();
@@ -75,6 +78,7 @@ public class UserService {
      * @param editUserRequest 유저 수정 객체
      * @throws UserException 유저를 찾지 못할 경우에 발생하는 예외
      */
+    @Transactional
     public void editUser(EditUserRequest editUserRequest) {
         User foundUser = userRepository.findById(editUserRequest.userId())
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
@@ -88,6 +92,7 @@ public class UserService {
      * @param user_id 유저의 id
      * @throws UserException 유저를 찾지 못할 경우에 발생하는 예외
      */
+    @Transactional
     public void completeTraining(Long user_id) {
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
@@ -101,6 +106,7 @@ public class UserService {
      * @param user_id 유저의 id
      * @throws UserException 유저를 찾지 못할 경우에 발생하는 예외
      */
+    @Transactional(readOnly = true)
     public boolean checkIsCompleteTraining(Long user_id) {
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
@@ -113,6 +119,7 @@ public class UserService {
      * @param user_id 유저의 id
      * @throws UserException 유저를 찾기 못할 경우에 발생하는 예외
      */
+    @Transactional
     public void deleteAccount(Long user_id) {
 
         User foundUser = userRepository.findById(user_id)

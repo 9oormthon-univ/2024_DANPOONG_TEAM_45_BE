@@ -57,6 +57,7 @@ public class IsQuizClearedService {
      * @param isQuizCleared_id 퀴즈 완료 여부의 id
      * @throws IsQuizClearedException 퀴즈 완료 여부가 존재하지 않을 경우 발생하는 예외입니다.
      */
+    @Transactional(readOnly = true)
     public ResponseIsQuizClearedDto getIsQuizCleared(Long isQuizCleared_id) {
         IsQuizCleared foundIsQuizCleared = isQuizClearedRepository.findById(isQuizCleared_id)
                 .orElseThrow(() -> new IsQuizClearedException(IsQuizClearedErrorCode.NOT_FOUND_QUIZ_ERROR));
@@ -72,6 +73,7 @@ public class IsQuizClearedService {
      * 데이터베이스에 등록된 퀴즈 완료 여부를 모두 조회하는 메서드입니다.
      * @author 김원정
      */
+    @Transactional(readOnly = true)
     public ResponseIsQuizClearedListDto getAllIsQuizCleared() {
         List<IsQuizCleared> isQuizClearedList = isQuizClearedRepository.findAll();
         List<ResponseIsQuizClearedDto> responseIsQuizClearedDtoList = new ArrayList<>();
@@ -95,6 +97,7 @@ public class IsQuizClearedService {
      * @param is_cleared 완료 여부
      * @throws IsQuizClearedException 문제 완료 여부가 존재하지 않을 경우 발생하는 예외입니다.
      */
+    @Transactional
     public void editIsQuizCleared(Long isQuizCleared_id, boolean is_cleared) {
         IsQuizCleared foundIsQuizCleared = isQuizClearedRepository.findById(isQuizCleared_id)
                 .orElseThrow(() -> new IsQuizClearedException(IsQuizClearedErrorCode.NOT_FOUND_QUIZ_ERROR));

@@ -38,6 +38,7 @@ public class IsChapterClearedService {
      * @throws ChapterException 챕터가 존재하지 않을 경우 예외가 발생합니다.
      * @throws IsChapterClearedException 챕터 완료 여부가 이미 등록되었다면 예외가 발생합니다.
      */
+    @Transactional
     public void clearedChapter(Long chapter_id, Long user_id) {
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
@@ -56,6 +57,7 @@ public class IsChapterClearedService {
      * @param isChapterCleared_id 챕터 완료 여부의 id
      * @throws IsChapterClearedException 챕터 완료 여부가 존재하지 않을 경우 예외가 발생합니다.
      */
+    @Transactional(readOnly = true)
     public ResponseIsChapterClearedDto getIsChapterCleared(Long isChapterCleared_id) {
         IsChapterCleared foundIsChapterCleared = isChapterClearedRepository.findById(isChapterCleared_id)
                 .orElseThrow(() -> new IsChapterClearedException(IsChapterClearedErrorCode.NOT_FOUND_IS_CHAPTER_CLEARED_ERROR));
@@ -71,6 +73,7 @@ public class IsChapterClearedService {
      * 데이터베이스에 등록된 챕터 완료 여부를 모두 조회하는 메서드입니다.
      * @author 김원정
      */
+    @Transactional(readOnly = true)
     public ResponseIsChapterClearedListDto getAllIsChapterClearedList() {
         List<IsChapterCleared> isChapterClearedList = isChapterClearedRepository.findAll();
         List<ResponseIsChapterClearedDto> responseIsChapterClearedListDtoList = new ArrayList<>();
@@ -99,5 +102,6 @@ public class IsChapterClearedService {
         IsChapterCleared foundIsChapterCleared = isChapterClearedRepository.findById(isChapterCleared_id)
                 .orElseThrow(() -> new IsChapterClearedException(IsChapterClearedErrorCode.NOT_FOUND_IS_CHAPTER_CLEARED_ERROR));
         foundIsChapterCleared.changeIsCleared(isCleared);
+        isChapterClearedRepository.save(foundIsChapterCleared);
     }
 }

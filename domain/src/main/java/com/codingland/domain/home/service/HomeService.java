@@ -18,6 +18,7 @@ import com.codingland.domain.user.entity.User;
 import com.codingland.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ public class HomeService {
      * 홈을 생성합니다.
      */
     @Deprecated
+    @Transactional
     public void createHome() {
         Home home = new Home();
         homeRepository.save(home);
@@ -46,6 +48,7 @@ public class HomeService {
      * @return 홈 정보 DTO
      * @throws HomeException 홈이 존재하지 않을 경우 예외 발생
      */
+    @Transactional(readOnly = true)
     public ResponseHomeDto getHome(Long user_id) {
         Home foundHome = homeRepository.findHomeByUserUserId(user_id)
                 .orElseThrow(() -> new HomeException(HomeErrorCode.NO_HOME_INFO));
@@ -69,6 +72,7 @@ public class HomeService {
      *
      * @return 홈 목록 DTO
      */
+    @Transactional(readOnly = true)
     public ResponseHomeListDto getHomeList() {
         List<Home> homes = homeRepository.findAll();
         List<ResponseHomeDto> homeDtoList = homes.stream()
@@ -94,6 +98,7 @@ public class HomeService {
      * @throws HomeException 홈이 존재하지 않을 경우 예외 발생
      */
     @Deprecated
+    @Transactional
     public void editHome(Long homeId,RequestEditHomeDto requestEditHomeDto) {
         Home home = homeRepository.findById(homeId)
                 .orElseThrow(() -> new HomeException(HomeErrorCode.NO_HOME_INFO));
@@ -107,6 +112,7 @@ public class HomeService {
      * @param homeId 삭제할 홈의 ID
      * @throws HomeException 홈이 존재하지 않을 경우 예외 발생
      */
+    @Transactional
     public void deleteHome(Long homeId) {
         Home home = homeRepository.findById(homeId)
                 .orElseThrow(() -> new HomeException(HomeErrorCode.NO_HOME_INFO));
@@ -120,6 +126,7 @@ public class HomeService {
      * @param character_id 바뀔 캐릭터 id
      * @param user_id 유저의 캐릭터인지 확인하기 위해 필요한 Id
      */
+    @Transactional
     @Deprecated
     public void changeCharacter(Long home_id, Long character_id, Long user_id) {
         Home foundHome = homeRepository.findById(home_id)

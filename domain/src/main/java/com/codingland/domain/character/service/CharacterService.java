@@ -19,6 +19,7 @@ import com.codingland.domain.user.entity.User;
 import com.codingland.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ public class CharacterService {
      * @return 새로운 캐릭터의 id와 캐릭터와 연관관계가 맺어진 새로운 home을 반환합니다.
      * @throws UserException 유저를 찾지 못했을 때 반환되는 예외
      */
+    @Transactional
     public ResponseCreateCharacterDto createCharacter(Long user_id, RequestCharacterDto requestCharacterDto) {
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
@@ -61,6 +63,7 @@ public class CharacterService {
      * @param character_id 캐릭터 id
      * @throws CharacterException 수정될 캐릭터를 찾지 못했을 경우 발생하는 Exception
      */
+    @Transactional
     public void editNameCharacter(Long character_id, String name) {
         Character foundCharacter = characterRepository.findById(character_id)
                 .orElseThrow(() -> new CharacterException(CharacterErrorCode.NOT_FOUND_CHARACTER_ERROR));
@@ -75,6 +78,7 @@ public class CharacterService {
      * @param increased_point 증가될 활동 포인트
      * @throws CharacterException 활동 포인트가 증가될 캐릭터를 찾지 못했을 경우 발생하는 Exception
      */
+    @Transactional
     public void increasedPoint(Long character_id, int increased_point) {
         Character foundCharacter = characterRepository.findById(character_id)
                 .orElseThrow(() -> new CharacterException(CharacterErrorCode.NOT_FOUND_CHARACTER_ERROR));
@@ -89,6 +93,7 @@ public class CharacterService {
      * @param decreased_point 감소될 활동 포인트
      * @throws CharacterException 활동 포인트가 감소될 캐릭터를 찾지 못했을 경우 발생하는 Exception
      */
+    @Transactional
     public void decreasedPoint(Long character_id, int decreased_point) {
         Character foundCharacter = characterRepository.findById(character_id)
                 .orElseThrow(() -> new CharacterException(CharacterErrorCode.NOT_FOUND_CHARACTER_ERROR));
@@ -102,6 +107,7 @@ public class CharacterService {
      * @param user_id 유저의 id
      * @throws UserException 유저가 존재하지 않을 경우 발생하는 예외
      */
+    @Transactional(readOnly = true)
     public ResponseListCharacterDto getAllCharacters(Long user_id) {
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
@@ -130,6 +136,7 @@ public class CharacterService {
      * @throws UserException 유저가 존재하지 않을 경우 발생하는 예외
      * @throws HomeException 등록된 홈이 존재하지 않을 경우 발생하는 예외
      */
+    @Transactional
     public ResponseCharacterDto pickRandomCharacter(Long user_id) {
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));

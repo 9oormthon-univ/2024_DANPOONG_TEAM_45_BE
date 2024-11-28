@@ -1,4 +1,4 @@
-package com.codingland.domain.quiz.entity;
+package com.codingland.domain.chapter.entity;
 
 import com.codingland.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -10,32 +10,28 @@ import org.hibernate.annotations.ColumnDefault;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class IsQuizCleared {
+public class HasReceivedReward {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ColumnDefault("false")
-    private boolean isCleared;
+    private boolean hasReceived;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "QUIZ_ID")
-    private Quiz quiz;
+    @JoinColumn(name = "CHAPTER_ID")
+    private Chapter chapter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_USERID")
     private User user;
 
-    public IsQuizCleared(boolean isCleared, Quiz quiz, User user) {
-        this.isCleared = isCleared;
-        this.quiz = quiz;
+    public HasReceivedReward(boolean hasReceived, Chapter chapter, User user) {
+        this.hasReceived = hasReceived;
+        this.chapter = chapter;
         this.user = user;
     }
 
-    public static IsQuizCleared thisProblemIsCleared(Quiz quiz, User user) {
-        return new IsQuizCleared(true, quiz, user);
-    }
-
-    public void changeIsQuizCleared(boolean isCleared) {
-        this.isCleared = isCleared;
+    public static HasReceivedReward thisRewardHasReceived(Chapter chapter, User user) {
+        return new HasReceivedReward(true, chapter, user);
     }
 }

@@ -7,9 +7,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Getter
 @Entity
+@BatchSize(size = 10)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Answer {
     @Id
@@ -24,7 +26,7 @@ public class Answer {
     @Column(name = "repeat_count")
     private int repeat;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "QUIZ_ID")
     private Quiz quiz;
 

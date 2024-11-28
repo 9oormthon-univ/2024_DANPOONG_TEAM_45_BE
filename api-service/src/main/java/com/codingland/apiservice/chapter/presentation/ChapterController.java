@@ -67,14 +67,4 @@ public class ChapterController {
         chapterService.deleteChapter(chapter_id);
         return ApplicationResponse.ok(null);
     }
-
-    @GetMapping("/{chapter_id}/reward/claim")
-    @Operation(summary = "챕터 보상 수령 확인 처리", description = """
-            (사용자) 챕터 보상을 받았다고 확인처리 하는 API입니다.
-            """)
-    public ApplicationResponse<Void> rewardClaim(@PathVariable Long chapter_id) {
-        chapterService.processChapterReward(chapter_id);
-        return ApplicationResponse.ok(null);
-    }
-
 }

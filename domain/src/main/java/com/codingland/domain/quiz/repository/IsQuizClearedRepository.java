@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IsQuizClearedRepository extends JpaRepository<IsQuizCleared, Long> {
+    List<IsQuizCleared> findAllByUserAndQuizIn(User user, List<Quiz> quizzes);
     List<IsQuizCleared> findByUser(User user);
     Optional<IsQuizCleared> findByQuizAndUser(Quiz quiz, User user);
 }

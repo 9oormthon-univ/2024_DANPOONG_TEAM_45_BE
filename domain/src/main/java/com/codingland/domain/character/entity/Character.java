@@ -25,7 +25,7 @@ public class Character {
     private CactusType cactus = CactusType.KING_CACTUS;
     private int activityPoints = 0;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_user_id")
     private User user;
 

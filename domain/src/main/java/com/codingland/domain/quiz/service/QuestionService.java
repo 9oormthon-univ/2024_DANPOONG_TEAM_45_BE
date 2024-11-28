@@ -7,6 +7,7 @@ import com.codingland.domain.quiz.entity.Question;
 import com.codingland.domain.quiz.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,8 @@ public class QuestionService {
      * @param requestEditQuestionDto 질문 수정 Dto
      * @throws QuestionException 수정 요청된 질문이 존재하지 않을 때 발생합니다.
      */
+    @Deprecated
+    @Transactional
     public void editQuestion(RequestEditQuestionDto requestEditQuestionDto) {
         Question foundQuestion = questionRepository.findById(requestEditQuestionDto.answerId())
                 .orElseThrow(() -> new QuestionException(QuestionErrorCode.NOT_FOUND_QUESTION_ERROR));
@@ -31,6 +34,8 @@ public class QuestionService {
      * @author 김원정
      * @param question_id 문제 id
      */
+    @Deprecated
+    @Transactional
     public void deleteQuestion(Long question_id) {
         questionRepository.deleteById(question_id);
     }
