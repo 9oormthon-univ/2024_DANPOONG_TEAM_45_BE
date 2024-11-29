@@ -65,16 +65,16 @@ public class ChapterService {
         IsChapterCleared foundIsChapterCleared = isChapterClearedRepository.findByChapterAndUser(foundChapter, foundUser)
                 .orElse(null);
 
+        List<IsQuizCleared> clearedQuizzes = isQuizClearedRepository.findAllByUserAndQuizIn(foundUser, foundChapter.getQuizzes());
+        Set<Long> clearedQuizzesIds = new HashSet<>();
+
         List<Long> quizIds = new ArrayList<>();
         for (Quiz quiz : foundChapter.getQuizzes()) {
             quizIds.add(quiz.getId());
         }
 
-        List<IsQuizCleared> clearedQuizzes = isQuizClearedRepository.findAllByUserAndQuizIn(foundUser, foundChapter.getQuizzes());
-        Set<Long> clearedQuizzesIds = new HashSet<>();
-
         for (IsQuizCleared clearedQuiz : clearedQuizzes) {
-            clearedQuizzesIds.add(clearedQuiz.getId());
+            clearedQuizzesIds.add(clearedQuiz.getQuiz().getId());
         }
 
         boolean buttonActiveState = true;
