@@ -3,7 +3,9 @@ package com.codingland.domain.user.service;
 
 import com.codingland.common.exception.user.UserErrorCode;
 import com.codingland.common.exception.user.UserException;
+import com.codingland.domain.chapter.entity.HasReceivedReward;
 import com.codingland.domain.chapter.entity.IsChapterCleared;
+import com.codingland.domain.chapter.repository.HasReceivedRewardRepository;
 import com.codingland.domain.chapter.repository.IsChapterClearedRepository;
 import com.codingland.domain.character.entity.Character;
 import com.codingland.domain.character.repository.CharacterRepository;
@@ -30,6 +32,7 @@ public class UserService {
     private final IsChapterClearedRepository isChapterClearedRepository;
     private final HomeRepository homeRepository;
     private final CharacterRepository characterRepository;
+    private final HasReceivedRewardRepository hasReceivedRewardRepository;
 
     /**
      * 유저 단 건 조회
@@ -133,6 +136,11 @@ public class UserService {
         List<IsChapterCleared> foundIsChapterClearedList = isChapterClearedRepository.findByUser(foundUser);
         if (!foundIsChapterClearedList.isEmpty()) {
             isChapterClearedRepository.deleteAll(foundIsChapterClearedList);
+        }
+        // 챕터 보상 수령 완료 여부 삭제
+        List<HasReceivedReward> foundHasReceivedRewardList = hasReceivedRewardRepository.findByUser(foundUser);
+        if (!foundHasReceivedRewardList.isEmpty()) {
+            hasReceivedRewardRepository.deleteAll(foundHasReceivedRewardList);
         }
         // 홈 삭제
         homeRepository.findByUser(foundUser).ifPresent(homeRepository::delete);
