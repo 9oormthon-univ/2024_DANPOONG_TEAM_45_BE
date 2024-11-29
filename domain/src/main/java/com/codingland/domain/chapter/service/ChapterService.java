@@ -131,21 +131,33 @@ public class ChapterService {
      */
     @Transactional(readOnly = true)
     public ResponseChapterListDto getChapterList(Long user_id) {
-        List<Chapter> foundChapterList = chapterRepository.findAll();
+        List<Chapter> foundChapterList = chapterRepository.findAllWithQuizzes();
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
+        List<IsChapterCleared> isChapterClearedList = isChapterClearedRepository.findAllByUserAndChapterIn(foundUser, foundChapterList);
+        Map<Long, IsChapterCleared> isChapterClearedMap = new HashMap<>();
+        for (IsChapterCleared isChapterCleared : isChapterClearedList) {
+            isChapterClearedMap.put(isChapterCleared.getChapter().getId(), isChapterCleared);
+        }
         List<ResponseChapterDto> responseChapterDtoList = new ArrayList<>();
+        List<Quiz> allQuizzes = new ArrayList<>();
         for (Chapter chapter : foundChapterList) {
-            IsChapterCleared foundIsChapterCleared = isChapterClearedRepository.findByChapterAndUser(chapter, foundUser)
-                    .orElse(null);
+            allQuizzes.addAll(chapter.getQuizzes());
+        }
+        List<IsQuizCleared> isQuizClearedList = isQuizClearedRepository.findAllByUserAndQuizIn(foundUser, allQuizzes);
+        Map<Long, IsQuizCleared> isQuizClearedMap = new HashMap<>();
+        for (IsQuizCleared isQuizCleared : isQuizClearedList) {
+            isQuizClearedMap.put(isQuizCleared.getQuiz().getId(), isQuizCleared);
+        }
+        for (Chapter chapter : foundChapterList) {
+            IsChapterCleared isChapterCleared = isChapterClearedMap.get(chapter.getId());
             List<ResponseFindByChapter> responseFindByChapterList = new ArrayList<>();
             if (!chapter.getQuizzes().isEmpty()) {
                 for (Quiz quiz : chapter.getQuizzes()) {
-                    IsQuizCleared foundIsQuizCleared = isQuizClearedRepository.findByQuizAndUser(quiz, foundUser)
-                                    .orElse(null);
+                    IsQuizCleared isQuizCleared = isQuizClearedMap.get(quiz.getId());
                     responseFindByChapterList.add(
                             ResponseFindByChapter.builder()
-                                    .isCleared(foundIsQuizCleared != null && foundIsQuizCleared.isCleared())
+                                    .isCleared(isQuizCleared != null && isQuizCleared.isCleared())
                                     .quizId(quiz.getId())
                                     .level(quiz.getDifficulty().getLevel())
                                     .title(quiz.getTitle())
@@ -157,7 +169,7 @@ public class ChapterService {
                     ResponseChapterDto.builder()
                             .id(chapter.getId())
                             .name(chapter.getName())
-                            .isCleared(foundIsChapterCleared != null && foundIsChapterCleared.isCleared())
+                            .isCleared(isChapterCleared != null && isChapterCleared.isCleared())
                             .quizzes(responseFindByChapterList)
                             .build()
             );
