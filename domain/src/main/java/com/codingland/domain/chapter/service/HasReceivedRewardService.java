@@ -1,7 +1,6 @@
 package com.codingland.domain.chapter.service;
 
-import com.codingland.common.exception.chapter.ChapterErrorCode;
-import com.codingland.common.exception.chapter.ChapterException;
+import com.codingland.common.exception.chapter.*;
 import com.codingland.common.exception.user.UserErrorCode;
 import com.codingland.common.exception.user.UserException;
 import com.codingland.domain.chapter.entity.Chapter;
@@ -34,6 +33,9 @@ public class HasReceivedRewardService {
                 .orElseThrow(() -> new ChapterException(ChapterErrorCode.NOT_FOUND_CHAPTER_ERROR));
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
+        if (hasReceivedRewardRepository.findByChapterAndUser(foundChapter, foundUser).isPresent()) {
+            throw new HasReceivedRewardException(HasReceivedRewardErrorCode.ALREADY_EXIST);
+        }
         HasReceivedReward hasReceivedReward = HasReceivedReward.thisRewardHasReceived(foundChapter, foundUser);
         hasReceivedRewardRepository.save(hasReceivedReward);
     }
