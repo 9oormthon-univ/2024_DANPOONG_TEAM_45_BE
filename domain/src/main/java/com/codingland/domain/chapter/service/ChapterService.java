@@ -93,10 +93,14 @@ public class ChapterService {
                 buttonActiveState = false;
         }
 
+        if(foundChapter.getQuizzes().isEmpty()) {
+            buttonActiveState = false;
+        }
+
         Map<Long, IsQuizCleared> quizClearedMap = new HashMap<>();
 
         for (IsQuizCleared clearedQuiz : clearedQuizzes) {
-            quizClearedMap.put(clearedQuiz.getId(), clearedQuiz);
+            quizClearedMap.put(clearedQuiz.getQuiz().getId(), clearedQuiz);
         }
 
         List<ResponseFindByChapter> responseQuizDtoList = new ArrayList<>();

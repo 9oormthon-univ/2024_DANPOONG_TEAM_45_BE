@@ -10,7 +10,7 @@ public record ResponseChapterDto(
         Long id,
         String name,
         boolean isCleared,
-        List<ResponseFindByChapter> quizzes,
-        boolean isRewardButtonActive
+        boolean isRewardButtonActive,
+        List<ResponseFindByChapter> quizzes
 ) {
 }
