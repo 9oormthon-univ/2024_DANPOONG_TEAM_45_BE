@@ -24,9 +24,11 @@ public class Quiz {
     private String message;
     private String hint;
 
+    @BatchSize(size = 50)
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.REMOVE)
     private List<Question> questions;
 
+    @BatchSize(size = 50)
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.REMOVE)
     private List<Answer> answers;
 
