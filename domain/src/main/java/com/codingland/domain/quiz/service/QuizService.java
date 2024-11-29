@@ -149,12 +149,36 @@ public class QuizService {
      */
     @Transactional(readOnly = true)
     public ResponseQuizListDto findByMany() {
-        List<Quiz> quizList = quizRepository.findAll();
+        List<Quiz> quizList = quizRepository.findAllWithChapterAndDifficulty();
         List<ResponseQuizDto> responseQuizDtoList = new ArrayList<>();
         for (Quiz quiz : quizList) {
+            List<ResponseQuestionDto> responseQuestionDtoList = new ArrayList<>();
+            for (Question question : quiz.getQuestions()) {
+                responseQuestionDtoList.add(
+                  ResponseQuestionDto.builder()
+                          .id(question.getId())
+                          .type(question.getType())
+                          .msg(question.getMsg())
+                          .repeat(question.getRepeat())
+                          .build()
+                );
+            }
+            List<ResponseAnswerDto> responseAnswerDtoList = new ArrayList<>();
+            for (Answer answer : quiz.getAnswers()) {
+                responseAnswerDtoList.add(
+                        ResponseAnswerDto.builder()
+                                .id(answer.getId())
+                                .type(answer.getType())
+                                .msg(answer.getMsg())
+                                .repeat(answer.getRepeat())
+                                .build()
+                );
+            }
             responseQuizDtoList.add(
                     ResponseQuizDto.builder()
                             .quizId(quiz.getId())
+                            .answers(responseAnswerDtoList)
+                            .questions(responseQuestionDtoList)
                             .title(quiz.getTitle())
                             .chapterId(quiz.getChapter().getId())
                             .level(quiz.getDifficulty().getLevel())

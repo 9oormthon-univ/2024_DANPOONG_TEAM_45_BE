@@ -14,7 +14,7 @@ import com.codingland.domain.chapter.entity.IsChapterCleared;
 import com.codingland.domain.chapter.repository.ChapterRepository;
 import com.codingland.domain.chapter.repository.HasReceivedRewardRepository;
 import com.codingland.domain.chapter.repository.IsChapterClearedRepository;
-import com.codingland.domain.quiz.dto.ResponseFindByChapter;
+import com.codingland.domain.quiz.dto.ResponseFindQuizByChapter;
 import com.codingland.domain.quiz.entity.IsQuizCleared;
 import com.codingland.domain.quiz.entity.Quiz;
 import com.codingland.domain.quiz.repository.IsQuizClearedRepository;
@@ -103,11 +103,11 @@ public class ChapterService {
             quizClearedMap.put(clearedQuiz.getQuiz().getId(), clearedQuiz);
         }
 
-        List<ResponseFindByChapter> responseQuizDtoList = new ArrayList<>();
+        List<ResponseFindQuizByChapter> responseQuizDtoList = new ArrayList<>();
         for (Quiz quiz : foundChapter.getQuizzes()) {
             IsQuizCleared cleared = quizClearedMap.get(quiz.getId());
             responseQuizDtoList.add(
-              ResponseFindByChapter.builder()
+              ResponseFindQuizByChapter.builder()
                       .quizId(quiz.getId())
                       .level(quiz.getDifficulty().getLevel())
                       .title(quiz.getTitle())
@@ -151,12 +151,12 @@ public class ChapterService {
         }
         for (Chapter chapter : foundChapterList) {
             IsChapterCleared isChapterCleared = isChapterClearedMap.get(chapter.getId());
-            List<ResponseFindByChapter> responseFindByChapterList = new ArrayList<>();
+            List<ResponseFindQuizByChapter> responseFindQuizByChapterList = new ArrayList<>();
             if (!chapter.getQuizzes().isEmpty()) {
                 for (Quiz quiz : chapter.getQuizzes()) {
                     IsQuizCleared isQuizCleared = isQuizClearedMap.get(quiz.getId());
-                    responseFindByChapterList.add(
-                            ResponseFindByChapter.builder()
+                    responseFindQuizByChapterList.add(
+                            ResponseFindQuizByChapter.builder()
                                     .isCleared(isQuizCleared != null && isQuizCleared.isCleared())
                                     .quizId(quiz.getId())
                                     .level(quiz.getDifficulty().getLevel())
@@ -170,7 +170,7 @@ public class ChapterService {
                             .id(chapter.getId())
                             .name(chapter.getName())
                             .isCleared(isChapterCleared != null && isChapterCleared.isCleared())
-                            .quizzes(responseFindByChapterList)
+                            .quizzes(responseFindQuizByChapterList)
                             .build()
             );
         }
