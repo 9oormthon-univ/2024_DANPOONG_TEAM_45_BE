@@ -26,6 +26,7 @@ public class Chapter {
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
     private List<IsChapterCleared> isChapterClearedList;
 
+    @OrderBy("id ASC")
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
     private List<Quiz> quizzes = new ArrayList<>();
 
