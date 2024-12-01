@@ -10,6 +10,7 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
     @Query("""
             SELECT DISTINCT c FROM Chapter c
             LEFT JOIN FETCH c.quizzes
+            ORDER BY c.id ASC
             """)
     List<Chapter> findAllWithQuizzes();
 }
