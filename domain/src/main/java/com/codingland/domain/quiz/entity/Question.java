@@ -24,7 +24,7 @@ public class Question {
     @Column(name = "repeat_count")
     private int repeat;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "QUIZ_ID")
     private Quiz quiz;
 

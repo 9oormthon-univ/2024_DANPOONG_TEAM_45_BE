@@ -7,11 +7,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.List;
 
 @Getter
 @Entity
+@BatchSize(size = 10)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Quiz {
     @Id
@@ -22,17 +24,19 @@ public class Quiz {
     private String message;
     private String hint;
 
+    @BatchSize(size = 50)
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.REMOVE)
     private List<Question> questions;
 
+    @BatchSize(size = 50)
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.REMOVE)
     private List<Answer> answers;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "CHAPTER_ID")
     private Chapter chapter;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "DIFFICULTY_ID")
     private Difficulty difficulty;
 

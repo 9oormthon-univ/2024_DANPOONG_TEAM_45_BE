@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ChapterErrorCode implements BaseErrorCode {
-    NOT_FOUND_CHAPTER_ERROR(HttpStatus.BAD_REQUEST, "2000", "챕터 정보가 존재하지 않습니다."),
+    NOT_FOUND_CHAPTER_ERROR(HttpStatus.BAD_REQUEST, "2000", "챕터 정보가 존재하지 않습니다.")
     ;
     private final HttpStatus httpStatus;
     private final String code;

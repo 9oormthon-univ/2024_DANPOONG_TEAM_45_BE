@@ -32,4 +32,7 @@ public class Home {
     public void editHome(RequestEditHomeDto requestEditHomeDto) {
         this.id = requestEditHomeDto.id();
     }
+    public void changeCharacter(Character character) {
+        this.character = character;
+    }
 }

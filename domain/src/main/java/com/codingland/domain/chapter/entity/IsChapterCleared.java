@@ -17,11 +17,11 @@ public class IsChapterCleared {
     @ColumnDefault("false")
     private boolean isCleared;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CHAPTER_ID")
     private Chapter chapter;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_USERID")
     private User user;
 

@@ -17,11 +17,11 @@ public class IsQuizCleared {
     @ColumnDefault("false")
     private boolean isCleared;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "QUIZ_ID")
     private Quiz quiz;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_USERID")
     private User user;
 

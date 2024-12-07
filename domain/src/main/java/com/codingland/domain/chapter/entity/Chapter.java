@@ -21,6 +21,13 @@ public class Chapter {
     private String name;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
+    private List<HasReceivedReward> hasReceivedReward;
+
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
+    private List<IsChapterCleared> isChapterClearedList;
+
+    @OrderBy("id ASC")
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
     private List<Quiz> quizzes = new ArrayList<>();
 
     public Chapter(String name) {
@@ -30,4 +37,5 @@ public class Chapter {
     public void editChapter(RequestEditChapterDto requestEditChapterDto) {
         this.name = requestEditChapterDto.name();
     }
+
 }

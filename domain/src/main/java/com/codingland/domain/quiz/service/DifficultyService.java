@@ -12,6 +12,7 @@ import com.codingland.domain.quiz.repository.DifficultyRepository;
 import com.codingland.domain.quiz.repository.QuizRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class DifficultyService {
      * @author 김원정
      * @param level 난이도
      */
+    @Transactional
     public void createDifficulty(int level) {
         Difficulty newDifficulty = new Difficulty(level);
         difficultyRepository.save(newDifficulty);
@@ -37,6 +39,7 @@ public class DifficultyService {
      * 데이터베이스에 등록된 난이도를 모두 조회할 때 사용하는 메서드.
      * @author 김원정
      */
+    @Transactional(readOnly = true)
     public ResponseDifficultyListDto getDifficultyList() {
         List<Difficulty> difficultyList = difficultyRepository.findAll();
         List<ResponseDifficultyDto> difficultyDtoList = new ArrayList<>();
@@ -58,6 +61,7 @@ public class DifficultyService {
      * @param level 조절할 난이도 값
      * @throws DifficultyException 난이도가 존재하지 않을 경우 발생하는 예외입니다.
      */
+    @Transactional
     public void editDifficulty(Long difficulty_id, int level) {
         Difficulty foundDifficulty = difficultyRepository.findById(difficulty_id)
                 .orElseThrow(() -> new DifficultyException(DifficultyErrorCode.NOT_FOUND_DIFFICULTY_ERROR));
@@ -72,6 +76,7 @@ public class DifficultyService {
      * @throws DifficultyException 난이도가 존재하지 않을 경우 발생하는 예외입니다.
      * @throws QuizException 퀴즈에 사용 중인 난이도의 경우(연관관계가 맺어져 있는 경우) 삭제되지 않아 발생하는 예외입니다.
      */
+    @Transactional
     public void deleteDifficulty(Long difficulty_id) {
         Difficulty foundDifficulty = difficultyRepository.findById(difficulty_id)
                 .orElseThrow(() -> new DifficultyException(DifficultyErrorCode.NOT_FOUND_DIFFICULTY_ERROR));

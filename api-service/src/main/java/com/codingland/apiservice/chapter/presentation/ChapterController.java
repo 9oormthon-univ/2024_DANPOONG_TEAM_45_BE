@@ -67,5 +67,4 @@ public class ChapterController {
         chapterService.deleteChapter(chapter_id);
         return ApplicationResponse.ok(null);
     }
-
 }

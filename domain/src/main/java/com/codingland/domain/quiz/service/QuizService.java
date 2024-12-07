@@ -17,6 +17,7 @@ import com.codingland.domain.user.entity.User;
 import com.codingland.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ public class QuizService {
      * @throws ChapterException 챕터가 존재하지 않을 경우 발생하는 예외입니다.
      * @throws DifficultyException 난이도가 존재하지 않을 경우 발생하는 예외입니다.
      */
+    @Transactional
     public void createQuiz(RequestCreateQuizDto requestCreateQuizDto) {
         Chapter foundChapter = chapterRepository.findById(requestCreateQuizDto.chapterId())
                 .orElseThrow(() -> new ChapterException(ChapterErrorCode.NOT_FOUND_CHAPTER_ERROR));
@@ -96,6 +98,7 @@ public class QuizService {
      * @throws QuizException 퀴즈를 찾지 못했을 경우 발생하는 예외
      * @throws UserException 유저를 찾지 못했을 경우 발생하는 예외입니다.
      */
+    @Transactional(readOnly = true)
     public ResponseQuizDto findByOne(Long quiz_id, Long user_id) {
         Quiz foundQuiz = quizRepository.findById(quiz_id)
                 .orElseThrow(() -> new QuizException(QuizErrorCode.NOT_FOUND_QUIZ_ERROR));
@@ -144,13 +147,38 @@ public class QuizService {
      * @author 김원정
      * @return 조회된 Quiz들의 정보를 담고 있는 ResponseQuizListDto
      */
+    @Transactional(readOnly = true)
     public ResponseQuizListDto findByMany() {
-        List<Quiz> quizList = quizRepository.findAll();
+        List<Quiz> quizList = quizRepository.findAllWithChapterAndDifficulty();
         List<ResponseQuizDto> responseQuizDtoList = new ArrayList<>();
         for (Quiz quiz : quizList) {
+            List<ResponseQuestionDto> responseQuestionDtoList = new ArrayList<>();
+            for (Question question : quiz.getQuestions()) {
+                responseQuestionDtoList.add(
+                  ResponseQuestionDto.builder()
+                          .id(question.getId())
+                          .type(question.getType())
+                          .msg(question.getMsg())
+                          .repeat(question.getRepeat())
+                          .build()
+                );
+            }
+            List<ResponseAnswerDto> responseAnswerDtoList = new ArrayList<>();
+            for (Answer answer : quiz.getAnswers()) {
+                responseAnswerDtoList.add(
+                        ResponseAnswerDto.builder()
+                                .id(answer.getId())
+                                .type(answer.getType())
+                                .msg(answer.getMsg())
+                                .repeat(answer.getRepeat())
+                                .build()
+                );
+            }
             responseQuizDtoList.add(
                     ResponseQuizDto.builder()
                             .quizId(quiz.getId())
+                            .answers(responseAnswerDtoList)
+                            .questions(responseQuestionDtoList)
                             .title(quiz.getTitle())
                             .chapterId(quiz.getChapter().getId())
                             .level(quiz.getDifficulty().getLevel())
@@ -169,6 +197,7 @@ public class QuizService {
      * @param requestEditQuizDto 수정할 정보를 담고 있는 RequestEditQuizDto
      * @throws QuizException 퀴즈를 찾지 못했을 때 발생하는 예외입니다.
      */
+    @Transactional
     public void editQuiz(RequestEditQuizDto requestEditQuizDto) {
         Quiz foundQuiz = quizRepository.findById(requestEditQuizDto.quizId())
                 .orElseThrow(() -> new QuizException(QuizErrorCode.NOT_FOUND_QUIZ_ERROR));
@@ -192,6 +221,7 @@ public class QuizService {
      * @param quiz_id 삭제하고 싶은 quiz의 id
      * @throws QuizException 퀴즈를 찾지 못했을 때 발생하는 예외입니다.
      */
+    @Transactional
     public void deleteQuiz(Long quiz_id) {
         Quiz foundQuiz = quizRepository.findById(quiz_id)
                 .orElseThrow(() -> new QuizException(QuizErrorCode.NOT_FOUND_QUIZ_ERROR));

@@ -7,6 +7,7 @@ import com.codingland.domain.quiz.entity.Answer;
 import com.codingland.domain.quiz.repository.AnswerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,8 @@ public class AnswerService {
      * @param requestEditAnswerDto 정답 수정 Dto
      * @throws AnswerException 수정 요청된 정답이 존재하지 않을 때 발생합니다.
      */
+    @Deprecated
+    @Transactional
     public void editAnswer(RequestEditAnswerDto requestEditAnswerDto) {
         Answer foundAnswer = answerRepository.findById(requestEditAnswerDto.answerId())
                 .orElseThrow(() -> new AnswerException(AnswerErrorCode.NOT_FOUND_ANSWER_ERROR));
@@ -33,6 +36,8 @@ public class AnswerService {
      * @author 김원정
      * @param answer_id 정답 id
      */
+    @Deprecated
+    @Transactional
     public void deleteAnswer(Long answer_id) {
         answerRepository.deleteById(answer_id);
     }

@@ -82,5 +82,14 @@ public class UserController {
         return ApplicationResponse.ok(result);
     }
 
+    @DeleteMapping
+    @Operation(summary = "유저 탈퇴", description = """
+            (관리자) 유저를 완전히 삭제하는 API입니다.
+            """)
+    public ApplicationResponse<Void> deleteUser(@RequestParam Long user_id) {
+        userService.deleteAccount(user_id);
+        return ApplicationResponse.ok(null);
+    }
+
 
 }

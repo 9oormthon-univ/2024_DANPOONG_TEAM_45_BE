@@ -1,8 +1,11 @@
 package com.codingland.domain.character.entity;
 
-import com.codingland.domain.character.common.CharacterTypeEnum;
+import com.codingland.domain.character.common.CactusType;
+import com.codingland.domain.character.common.ProgressEnum;
+import com.codingland.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,11 +21,19 @@ public class Character {
     private Long id;
     private String name;
     private int level = 0;
-    private CharacterTypeEnum type = CharacterTypeEnum.LEVEL_LOW;
+    private ProgressEnum type = ProgressEnum.LEVEL_LOW;
+    private CactusType cactus = CactusType.KING_CACTUS;
     private int activityPoints = 0;
 
-    public Character(String name) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_user_id")
+    private User user;
+
+    @Builder
+    public Character(String name, CactusType cactus, User user) {
         this.name = name;
+        this.cactus = cactus;
+        this.user = user;
     }
     public void editName(String name) {
         this.name = name;
@@ -37,9 +48,9 @@ public class Character {
         }
 
         if (this.level > 10) {
-            this.type = CharacterTypeEnum.LEVEL_HIGH;
+            this.type = ProgressEnum.LEVEL_HIGH;
         } else if (this.level > 5) {
-            this.type = CharacterTypeEnum.LEVEL_MEDIUM;
+            this.type = ProgressEnum.LEVEL_MEDIUM;
         }
     }
 
@@ -55,11 +66,11 @@ public class Character {
             this.level = newLevel;
 
             if (this.level > 10) {
-                this.type = CharacterTypeEnum.LEVEL_HIGH;
+                this.type = ProgressEnum.LEVEL_HIGH;
             } else if (this.level > 5) {
-                this.type = CharacterTypeEnum.LEVEL_MEDIUM;
+                this.type = ProgressEnum.LEVEL_MEDIUM;
             } else {
-                this.type = CharacterTypeEnum.LEVEL_LOW;
+                this.type = ProgressEnum.LEVEL_LOW;
             }
         }
     }
