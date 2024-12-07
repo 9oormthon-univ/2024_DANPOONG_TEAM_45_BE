@@ -7,10 +7,7 @@ import com.codingland.common.exception.home.HomeException;
 import com.codingland.common.exception.user.UserErrorCode;
 import com.codingland.common.exception.user.UserException;
 import com.codingland.domain.character.common.CactusType;
-import com.codingland.domain.character.dto.RequestCharacterDto;
-import com.codingland.domain.character.dto.ResponseCharacterDto;
-import com.codingland.domain.character.dto.ResponseCreateCharacterDto;
-import com.codingland.domain.character.dto.ResponseListCharacterDto;
+import com.codingland.domain.character.dto.*;
 import com.codingland.domain.character.entity.Character;
 import com.codingland.domain.character.repository.CharacterRepository;
 import com.codingland.domain.home.entity.Home;
@@ -112,20 +109,20 @@ public class CharacterService {
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
         List<Character> foundCharacterList = characterRepository.findCharacterByUser(foundUser);
-        List<ResponseCharacterDto> responseCharacterDtoList = new ArrayList<>();
+        List<ResponseCharacterDetailDto> responseCharacterDetailDtoList = new ArrayList<>();
         for (Character character : foundCharacterList) {
-            responseCharacterDtoList.add(
-                    ResponseCharacterDto.builder()
+            responseCharacterDetailDtoList.add(
+                    ResponseCharacterDetailDto.builder()
                             .id(character.getId())
-                            .name(character.getName())
                             .level(character.getLevel())
                             .type(character.getType())
-                            .cactusType(character.getCactus())
+                            .cactusName(character.getCactus().getName())
+                            .cactusRank(character.getCactus().getRank())
                             .activityPoints(character.getActivityPoints())
                             .build()
             );
         }
-        return new ResponseListCharacterDto(responseCharacterDtoList);
+        return new ResponseListCharacterDto(responseCharacterDetailDtoList);
     }
 
 
@@ -137,7 +134,7 @@ public class CharacterService {
      * @throws HomeException 등록된 홈이 존재하지 않을 경우 발생하는 예외
      */
     @Transactional
-    public ResponseCharacterDto pickRandomCharacter(Long user_id) {
+    public ResponseCharacterDetailDto pickRandomCharacter(Long user_id) {
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
         Character foundCharacter = characterRepository.findCharacterByUser(foundUser)
@@ -155,12 +152,12 @@ public class CharacterService {
                 .orElseThrow(() -> new HomeException(HomeErrorCode.NO_HOME_INFO));
         foundHome.changeCharacter(savedCharacter);
         homeRepository.save(foundHome);
-        return ResponseCharacterDto.builder()
+        return ResponseCharacterDetailDto.builder()
                 .id(savedCharacter.getId())
-                .name(savedCharacter.getName())
                 .level(savedCharacter.getLevel())
                 .type(savedCharacter.getType())
-                .cactusType(savedCharacter.getCactus())
+                .cactusName(savedCharacter.getCactus().getName())
+                .cactusRank(savedCharacter.getCactus().getRank())
                 .activityPoints(savedCharacter.getActivityPoints())
                 .build();
     }

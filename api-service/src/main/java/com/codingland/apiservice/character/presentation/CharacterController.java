@@ -1,10 +1,7 @@
 package com.codingland.apiservice.character.presentation;
 
 import com.codingland.common.common.ApplicationResponse;
-import com.codingland.domain.character.dto.RequestCharacterDto;
-import com.codingland.domain.character.dto.ResponseCharacterDto;
-import com.codingland.domain.character.dto.ResponseCreateCharacterDto;
-import com.codingland.domain.character.dto.ResponseListCharacterDto;
+import com.codingland.domain.character.dto.*;
 import com.codingland.domain.character.service.CharacterService;
 import com.codingland.domain.user.entity.User;
 import com.codingland.security.annotation.UserResolver;
@@ -61,8 +58,8 @@ public class CharacterController {
     @Operation(summary = "캐릭터 랜덤 뽑기 후 홈화면 선인장 교체", description = """
             (사용자) 캐릭터를 랜덤 뽑기 한 후 홈화면에 있는 선인장을 새롭게 뽑은 선인장으로 교체합니다.
             """)
-    public ApplicationResponse<ResponseCharacterDto> getRandomCharacter(@UserResolver User user) {
-        ResponseCharacterDto result = characterService.pickRandomCharacter(user.getUserId());
+    public ApplicationResponse<ResponseCharacterDetailDto> getRandomCharacter(@UserResolver User user) {
+        ResponseCharacterDetailDto result = characterService.pickRandomCharacter(user.getUserId());
         return ApplicationResponse.ok(result);
     }
 
