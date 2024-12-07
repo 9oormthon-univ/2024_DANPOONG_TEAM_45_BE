@@ -6,11 +6,13 @@ import com.codingland.common.exception.home.HomeErrorCode;
 import com.codingland.common.exception.home.HomeException;
 import com.codingland.common.exception.user.UserErrorCode;
 import com.codingland.common.exception.user.UserException;
+import com.codingland.domain.character.dto.ResponseCharacterDetailDto;
 import com.codingland.domain.character.dto.ResponseCharacterDto;
 import com.codingland.domain.character.entity.Character;
 import com.codingland.domain.character.repository.CharacterRepository;
 import com.codingland.domain.home.dto.RequestEditHomeDto;
 import com.codingland.domain.home.dto.ResponseHomeDto;
+import com.codingland.domain.home.dto.ResponseHomeForRankingDto;
 import com.codingland.domain.home.dto.ResponseHomeListDto;
 import com.codingland.domain.home.entity.Home;
 import com.codingland.domain.home.repository.HomeRepository;
@@ -75,14 +77,15 @@ public class HomeService {
     @Transactional(readOnly = true)
     public ResponseHomeListDto getHomeList() {
         List<Home> homes = homeRepository.findAll();
-        List<ResponseHomeDto> homeDtoList = homes.stream()
-                .map(home -> new ResponseHomeDto(
+        List<ResponseHomeForRankingDto> homeDtoList = homes.stream()
+                .map(home -> new ResponseHomeForRankingDto(
                         home.getId(),
-                        ResponseCharacterDto.builder()
+                        ResponseCharacterDetailDto.builder()
                                 .id(home.getCharacter().getId())
                                 .name(home.getCharacter().getName())
                                 .level(home.getCharacter().getLevel())
-                                .type(home.getCharacter().getType())
+                                .cactusName(home.getCharacter().getCactus().getName())
+                                .cactusRank(home.getCharacter().getCactus().getRank())
                                 .activityPoints(home.getCharacter().getActivityPoints())
                                 .build(),
                         home.getUser().getPicture()

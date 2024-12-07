@@ -4,9 +4,8 @@ import com.codingland.domain.character.common.ProgressEnum;
 import lombok.Builder;
 
 @Builder
-public record ResponseCharacterDetailDto(
+public record ResponseCharacterGuidebookDto(
         Long id,
-        String name,
         int level,
         ProgressEnum type,
         String cactusName,

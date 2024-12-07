@@ -109,10 +109,10 @@ public class CharacterService {
         User foundUser = userRepository.findById(user_id)
                 .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
         List<Character> foundCharacterList = characterRepository.findCharacterByUser(foundUser);
-        List<ResponseCharacterDetailDto> responseCharacterDetailDtoList = new ArrayList<>();
+        List<ResponseCharacterGuidebookDto> responseCharacterDetailDtoList = new ArrayList<>();
         for (Character character : foundCharacterList) {
             responseCharacterDetailDtoList.add(
-                    ResponseCharacterDetailDto.builder()
+                    ResponseCharacterGuidebookDto.builder()
                             .id(character.getId())
                             .level(character.getLevel())
                             .type(character.getType())
