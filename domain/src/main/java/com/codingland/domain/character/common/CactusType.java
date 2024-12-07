@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum CactusType {
-    KING_CACTUS("킹선인장", "★"),
+    KING_CACTUS("킹 선인장", "★"),
     HERO_CACTUS("영웅 선인장", "★★"),
     MAGICIAN("마법사 선인장", "★★★");
 
