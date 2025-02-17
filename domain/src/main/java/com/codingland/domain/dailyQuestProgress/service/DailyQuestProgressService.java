@@ -1,5 +1,7 @@
 package com.codingland.domain.dailyQuestProgress.service;
 
+import com.codingland.common.exception.dailyQuestProgress.DailyQuestProgressErrorCode;
+import com.codingland.common.exception.dailyQuestProgress.DailyQuestProgressException;
 import com.codingland.common.exception.user.UserErrorCode;
 import com.codingland.common.exception.user.UserException;
 import com.codingland.domain.dailyQuestProgress.dto.ResponseDailyQuestProgressDto;
@@ -50,5 +52,21 @@ public class DailyQuestProgressService {
                 .isCompleted(foundDailyQuestProgress.isCompleted())
                 .userId(foundDailyQuestProgress.getUser().getUserId())
                 .build();
+    }
+
+    /**
+     * 오늘의 퀘스트를 완료처리하는 메서드입니다.
+     * @author 김원정
+     * @param user_id 유저의 id
+     */
+    @Transactional
+    public void markQuestCompleted(Long user_id) {
+        User foundUser = userRepository.findById(user_id)
+                .orElseThrow(() -> new UserException(UserErrorCode.No_USER_INFO));
+        LocalDate today = LocalDate.now();
+        DailyQuestProgress foundDailyQuestProgress = dailyQuestProgressRepository.findByUserAndDate(foundUser, today)
+                .orElseThrow(() -> new DailyQuestProgressException(DailyQuestProgressErrorCode.NOT_FOUND_DAILY_QUEST_PROGRESS_ERROR));
+        foundDailyQuestProgress.updateIsCompleted(true);
+        dailyQuestProgressRepository.save(foundDailyQuestProgress);
     }
 }

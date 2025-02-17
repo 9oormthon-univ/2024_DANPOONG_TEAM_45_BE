@@ -65,11 +65,11 @@ public class IsQuizClearedService {
                             .solvedCount(0)
                             .isCompleted(false)
                             .build());
-            progress.updateSolvedCount(progress.getSolvedCount() + 1);
 
-            if (progress.getSolvedCount() >= 3) {
-                progress.updateIsCompleted(true);
+            if (progress.getSolvedCount() < 3) {
+                progress.updateSolvedCount(progress.getSolvedCount() + 1);
             }
+
             dailyQuestProgressRepository.save(progress);
     }
 
