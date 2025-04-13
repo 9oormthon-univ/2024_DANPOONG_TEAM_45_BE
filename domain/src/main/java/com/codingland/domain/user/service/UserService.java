@@ -9,6 +9,8 @@ import com.codingland.domain.chapter.repository.HasReceivedRewardRepository;
 import com.codingland.domain.chapter.repository.IsChapterClearedRepository;
 import com.codingland.domain.character.entity.Character;
 import com.codingland.domain.character.repository.CharacterRepository;
+import com.codingland.domain.dailyQuestProgress.entity.DailyQuestProgress;
+import com.codingland.domain.dailyQuestProgress.repository.DailyQuestProgressRepository;
 import com.codingland.domain.home.repository.HomeRepository;
 import com.codingland.domain.quiz.entity.IsQuizCleared;
 import com.codingland.domain.quiz.repository.IsQuizClearedRepository;
@@ -33,6 +35,7 @@ public class UserService {
     private final HomeRepository homeRepository;
     private final CharacterRepository characterRepository;
     private final HasReceivedRewardRepository hasReceivedRewardRepository;
+    private final DailyQuestProgressRepository dailyQuestProgressRepository;
 
     /**
      * 유저 단 건 조회
@@ -148,6 +151,11 @@ public class UserService {
         List<Character> foundCharacterList = characterRepository.findCharacterByUser(foundUser);
         if (!foundCharacterList.isEmpty()) {
             characterRepository.deleteAll(foundCharacterList);
+        }
+        // 일일 퀘스트 삭제
+        List<DailyQuestProgress> foundDailyQuestProgress = dailyQuestProgressRepository.findByUser(foundUser);
+        if (!foundDailyQuestProgress.isEmpty()) {
+            dailyQuestProgressRepository.deleteAll(foundDailyQuestProgress);
         }
 
         userRepository.delete(foundUser);
